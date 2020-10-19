@@ -1,0 +1,249 @@
+<div class="row">
+	
+	<!-- Flash Messages -->
+	<div ng-include="'views/partials/messages.html'" ></div>
+
+	<header class="page-header clearfix">
+		<h3 class="pull-left">Movimentos</h3>
+		<br>
+		<div class="btn-group pull-right">
+			<button class="btn btn-default" ng-click="newMovement = null;restForm$setPristine();" data-toggle="modal" data-target="#movement-form">
+				<span class="glyphicon glyphicon-plus-sign"></span>
+				Adicionar Movimento
+			</button>
+		</div>	
+	</header>
+
+	<h1>Consulta por tipo</h1>
+	<div class="form-group">
+		<div class="input-group">
+			<span class="input-group-addon">
+				<span class="glyphicon glyphicon-font"></span>
+			</span>
+			<select 
+				class="form-control" 
+				name="movementType" 
+				id="movementType" 
+				ng-model="movementTypeSelected"
+				ng-change="onChangeProductType()" 
+				required>
+				<option value="">Consulta por tipo de produto</option>
+				<option value="ELETRONIC">Eletrônico</option>
+				<option value="HOUSEHOLD_APPLIANCE">Eletrodoméstico</option>
+				<option value="FURNITURE">Móvel</option>
+				<option value="COMPUTING">Informática</option>
+				<option value="CELLPHONE">Celulares</option>
+			</select>
+		</div>
+	</div>
+	
+	<div class="jumbotron empty" ng-hide="movementsByProductType.length">
+	  <p>Nenhum produto para o tipo selecionado</p>
+	</div>
+	<table class="table table-hover" ng-show="movementsByProductType.length">
+
+		<thead>
+			<tr>
+				<th style="text-align: center;">Código</th>
+				<th style="text-align: center;">Descrição</th>
+				<th style="text-align: center;">Quantidade vendida</th>
+				<th style="text-align: center;">Quantidade disponível</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="repeated-item" ng-repeat="product in movementsByProductType">
+                <td style="text-align: center;">{{product.productCode}}</td>
+                <td style="text-align: center;">{{product.productDescription}}</td>
+                <td style="text-align: center;">{{product.quantityOut}}</td>
+                <td style="text-align: center;">{{product.quantityAvailable}}</td>
+				<td></td>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<hr>
+	<h1>Consulta por produto</h1>
+	<div class="form-group">
+		<div class="input-group">
+			<span class="input-group-addon">
+				<span class="glyphicon glyphicon-font"></span>
+			</span>
+			<select 
+				class="form-control" 
+				name="productId" 
+				id="productId" 
+				ng-model="productIdSelected"
+				ng-change="onChangeProduct()" 
+				required>
+				<option value="">Consulta por produto</option>
+				<option ng-repeat="product in products" value="{{product.id}}">{{product.description}}</option>
+			</select>
+		</div>
+	</div>
+	
+
+	<div class="jumbotron empty" ng-hide="movementsByProduct.length">
+	  <p>Selecione um produto</p>
+	</div>
+	<table class="table table-hover" ng-show="movementsByProduct.length">
+
+		<thead>
+			<tr>
+				<th style="text-align: center;">Código</th>
+				<th style="text-align: center;">Descrição</th>
+				<th style="text-align: center;">Quantidade vendida</th>
+				<th style="text-align: center;">Lucro</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="repeated-item" ng-repeat="product in movementsByProduct">
+                <td style="text-align: center;">{{product.productCode}}</td>
+                <td style="text-align: center;">{{product.productDescription}}</td>
+                <td style="text-align: center;">{{product.quantityOut}}</td>
+                <td style="text-align: center;">{{product.profitValue | currency : R$}}</td>
+				<td></td>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<!-- CODIGO -->
+<!-- DESCRIPTION -->
+<!-- QUANTITYOUT -->
+<!-- QUANTITYAVAILABLE -->
+
+<!-- movement Form Modal -->
+<div 
+	class="modal fade" 
+	id="movement-form" 
+	data-backdrop="static" 
+	data-keyboard="false" 
+	role="dialog" 
+	aria-labelledby="movement-form" 
+	aria-hidden="true">
+
+	<div class="modal-dialog">
+	  <div class="modal-content">
+	    <div class="modal-header">
+	      <h4 class="modal-title"> 
+	        <span ng-hide="newMovement.product">Novo</span>
+	        {{newMovement.product}}
+	        </h4>
+	    </div>
+	    <div class="modal-body">
+	      
+	        <form ng-submit="" description="restForm" id="restForm" novalidate>
+	        	
+	        	<div class="form-group">
+		        	<div class="input-group">
+		        		<span class="input-group-addon">
+		        			<span class="glyphicon glyphicon-font"></span>
+		        		</span>
+						<select 
+							class="form-control" 
+							name="product" 
+							id="product" 
+							ng-model="newMovement.productId" 
+							required>
+    						<option value="">Selecione o produto</option>
+							<option value="{{product.id}}" ng-repeat="product in products">{{product.description}}</option>
+						</select>
+					</div>
+					<span class="help-block" ng-show="restForm.product.$dirty && restForm.product.$invalid">
+						Selecione o produto.
+					</span>
+                </div>
+
+                <div class="form-group">
+		        	<div class="input-group">
+		        		<span class="input-group-addon">
+		        			<span class="glyphicon glyphicon-font"></span>
+		        		</span>
+						<select 
+							class="form-control" 
+							name="movementType" 
+							id="movementType" 
+							ng-model="newMovement.movementType" 
+							required>
+    						<option value="">Selecione o Tipo de Movimentação</option>
+							<option value="IN">Entrada</option>
+							<option value="OUT">Saída</option>
+						</select>
+					</div>
+					<span class="help-block" ng-show="restForm.movementType.$dirty && restForm.movementType.$invalid">
+					</span>
+				</div>
+
+	        	<div class="form-group" ng-if="newMovement.movementType == 'OUT' ">
+		        	<div class="input-group">
+		        		<span class="input-group-addon">
+		        			<span class="glyphicon glyphicon-font"></span>
+		        		</span>
+						<input 
+							placeholder="Valor de venda"
+							type="saleValue" 
+							class="form-control" 
+							name="saleValue" 
+							id="saleValue" 
+							ng-model="newMovement.saleValue" 
+							required >
+					</div>
+					<span class="help-block" ng-show="restForm.saleValue.$dirty && restForm.saleValue.$invalid">
+						Digite o valor de venda.
+					</span>
+                </div>
+
+	        	<div class="form-group">
+		        	<div class="input-group">
+		        		<span class="input-group-addon">
+		        			<span class="glyphicon glyphicon-font"></span>
+		        		</span>
+						<input 
+							placeholder="Data de venda"
+							type="date" 
+							class="form-control" 
+							name="saleDate" 
+							id="saleDate" 
+							ng-model="newMovement.saleDate" 
+							required >
+					</div>
+					<span class="help-block" ng-show="restForm.saleDate.$dirty && restForm.saleDate.$invalid">
+						Digite a data de venda.
+					</span>
+                </div>
+
+                <div class="form-group">
+		        	<div class="input-group">
+		        		<span class="input-group-addon">
+		        			<span class="glyphicon glyphicon-font"></span>
+		        		</span>
+						<input 
+							placeholder="Quantidade movimentada"
+							type="movementedQuantity" 
+							class="form-control" 
+							name="movementedQuantity" 
+							id="movementedQuantity" 
+							ng-model="newMovement.movementedQuantity" 
+							required >
+					</div>
+					<span class="help-block" ng-show="restForm.movementedQuantity.$dirty && restForm.movementedQuantity.$invalid">
+						Digite a quantidade movimentada.
+					</span>
+                </div>		
+	  	
+	         	<input type="hidden" ng-model="newMovement.product">
+
+	        </form>
+	     
+	    </div>
+	    <div class="modal-footer">
+	      <button ng-click="newMovement = {}; restForm.$setPristine();" type="button" data-dismiss="modal" class="btn btn-default pull-left">Cancelar</button>
+	      
+	      <button type="button" class="btn btn-success" data-dismiss="modal" 	 ng-click="saveMovement()">Salvar</button>
+
+	    </div>
+	  </div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div>
